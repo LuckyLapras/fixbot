@@ -4,6 +4,10 @@
 *~
 *.un~
 
+# Safety Jim here! It appears that the token for your bot, IDC IF U TRANS FIX YO DAMN TWEET has been posted to the internet. Luckily, our token-scanning gremlins noticed, and have reset your bot's token - hopefully before anyone could have maliciously used it!
+
+config.json
+
 # Logs
 logs
 *.log
