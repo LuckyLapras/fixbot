@@ -1,3 +1,9 @@
+# backups
+
+*.bak*
+*~
+*.un~
+
 # Logs
 logs
 *.log
