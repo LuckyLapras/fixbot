@@ -15,13 +15,47 @@ client.once(Events.ClientReady, c => {
 
 client.on('messageCreate', message => {
     const twitLink = 'https://twitter.com/'
+    const xLink = 'https://x.com/'
+    const shortsLink = '.youtube.com/shorts/'
+    const tiktokLink = '.tiktok.com/'
     var content = message.content
     if (content.includes(twitLink)) {
-        let link = content.match(/(?<!\<)(?:https:\/\/twitter.com)[^\s]+/gi)
+        message.suppressEmbeds(true)
+        let link = content.match(/(?<!\<)(?:https:\/\/twitter.com)[^(\s|?)]+/gi)
         var string = ''
         for (let l in link) {
             let fxlink = []
             fxlink[l] = link[l].replace('//twit', '//vxtwit')
+            string += `${fxlink[l]} `
+        }
+        if (string) message.reply(`${string}`);
+    } else if (content.includes(xLink)) {
+        message.suppressEmbeds(true)
+        let link = content.match(/(?<!\<)(?:https:\/\/x.com)[^(\s|?)]+/gi)
+        var string = ''
+        for (let l in link) {
+            let fxlink = []
+            fxlink[l] = link[l].replace('//x', '//vxtwitter')
+            string += `${fxlink[l]} `
+        }
+        if (string) message.reply(`${string}`);
+    } else if (content.includes(shortsLink)) {
+        message.suppressEmbeds(true)
+        let link = content.match(/(?<!\<)(?:https:\/\/(?:www.)?youtube.com\/shorts)[^\s]+/gi)
+        var string = ''
+        for (let l in link) {
+            let fxlink = []
+            fxlink[l] = link[l].replace('/shorts/', '/watch?v=')
+            string += `${fxlink[l]} `
+        }
+        if (string) message.reply(`${string}`);
+    } else if (content.includes(tiktokLink)) {
+        message.suppressEmbeds(true)
+        let link = content.match(/(?<!\<)(?:https:\/\/(?:www|vm).tiktok.com)[^\s]+/gi)
+        var string = ''
+        for (let l in link) {
+            let fxlink = []
+            fxlink[l] = link[l].replace('tiktok', 'vxtiktok')
             string += `${fxlink[l]} `
         }
         if (string) message.reply(`${string}`);
