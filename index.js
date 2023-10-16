@@ -6,7 +6,8 @@ const client = new Client({
         GatewayIntentBits.Guilds, 
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.MessageContent
-    ]
+    ],
+    allowedMentions: { repliedUser: false }
 });
 
 client.once(Events.ClientReady, c => {
@@ -18,6 +19,7 @@ client.on('messageCreate', message => {
     const xLink = 'https://x.com/'
     const shortsLink = '.youtube.com/shorts/'
     const tiktokLink = '.tiktok.com/'
+    const tumblrLink = 'https://www.tumblr.com'
     var content = message.content
     if (content.includes(twitLink)) {
         message.suppressEmbeds(true)
@@ -25,17 +27,18 @@ client.on('messageCreate', message => {
         var string = ''
         for (let l in link) {
             let fxlink = []
-            fxlink[l] = link[l].replace('//twit', '//vxtwit')
+            fxlink[l] = link[l].replace('//twit', '//fxtwit')
             string += `${fxlink[l]} `
         }
         if (string) message.reply(`${string}`);
     } else if (content.includes(xLink)) {
+        message.react('🇧🇷')
         message.suppressEmbeds(true)
         let link = content.match(/(?<!\<)(?:https:\/\/x.com)[^(\s|?)]+/gi)
         var string = ''
         for (let l in link) {
             let fxlink = []
-            fxlink[l] = link[l].replace('//x', '//vxtwitter')
+            fxlink[l] = link[l].replace('//x', '//fxtwitter')
             string += `${fxlink[l]} `
         }
         if (string) message.reply(`${string}`);
@@ -59,8 +62,20 @@ client.on('messageCreate', message => {
             string += `${fxlink[l]} `
         }
         if (string) message.reply(`${string}`);
+    } if (content.includes(tumblrLink)) {
+        message.suppressEmbeds(true)
+        let link = content.match(/(?<!\<)(?:https:\/\/www.tumblr.com)[^(\s|?)]+/gi);
+        var string = ''
+        for(let l in link) {
+            let fxlink = []
+            var name = link[l].split('/')[3];
+            var id = link[l].split('/')[4];
+            fxlink[l] = `https://${name}.tumblr.com/post/${id}`;
+            string += `${fxlink[l]} `
+        }
+        if (string) message.reply(`${string}`);
     } else if (content.startsWith("t!invite")) {
-        message.reply(`https://discord.com/api/oauth2/authorize?client_id=${CONFIG.app_id}&permissions=414464625664&scope=bot%20applications.commands`)
+        message.reply(`invite this bot with https://discord.com/api/oauth2/authorize?client_id=${CONFIG.app_id}&permissions=414464625664&scope=bot%20applications.commands or clone the repo and host it yourself https://github.com/LuckyLapras/fixbot`)
     }
 });
 
