@@ -1,4 +1,6 @@
-const { Client, Events, GatewayIntentBits } = require('discord.js');
+const fs = require('node:fs');
+const path = require('node:path');
+const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 const CONFIG = require('./config.json');
 
 const client = new Client({ 
@@ -14,58 +16,56 @@ client.once(Events.ClientReady, c => {
     console.log(`Ready! Logged in as ${c.user.tag}`);
 });
 
-client.on('messageCreate', message => {
+client.on('messageCreate', async message => {
     const twitLink = 'https://twitter.com/'
     const xLink = 'https://x.com/'
-    const shortsLink = '.youtube.com/shorts/'
-    const tiktokLink = '.tiktok.com/'
+    const ytLink = '.youtube.com/'
+    const redditLink = 'https://www.reddit.com'
     const tumblrLink = 'https://www.tumblr.com'
     var content = message.content
+    var string = ''
     if (content.includes(twitLink)) {
-        message.suppressEmbeds(true)
         let link = content.match(/(?<!\<)(?:https:\/\/twitter.com)[^(\s|?)]+/gi)
-        var string = ''
         for (let l in link) {
             let fxlink = []
             fxlink[l] = link[l].replace('//twit', '//fxtwit')
             string += `${fxlink[l]} `
         }
-        if (string) message.reply(`${string}`);
     } else if (content.includes(xLink)) {
         message.react('🇧🇷')
-        message.suppressEmbeds(true)
         let link = content.match(/(?<!\<)(?:https:\/\/x.com)[^(\s|?)]+/gi)
-        var string = ''
+        //var string = ''
         for (let l in link) {
             let fxlink = []
             fxlink[l] = link[l].replace('//x', '//fxtwitter')
             string += `${fxlink[l]} `
         }
-        if (string) message.reply(`${string}`);
-    } else if (content.includes(shortsLink)) {
-        message.suppressEmbeds(true)
-        let link = content.match(/(?<!\<)(?:https:\/\/(?:www.)?youtube.com\/shorts)[^\s]+/gi)
+    } else if (content.includes(ytLink)) {
         var string = ''
+        if (content.includes('/shorts/')) {
+            let link = content.match(/(?<!\<)(?:https:\/\/(?:www.)?youtube.com\/shorts)[^\s]+/gi)
+            for (let l in link) {
+                let fxlink = []
+                fxlink[l] = link[l].replace('/shorts/', '/watch?v=')
+                string += `${fxlink[l]} `
+            }
+        } else {
+            let link = content.match(/(?<!\<)(?:https:\/\/(?:www.)?youtube.com\/)[^\s]+(?=&pp=)/gi)
+            for (let l in link) {
+                let fxlink = []
+                fxlink[l] = link[l]
+                string += `${fxlink[l]} `
+            }
+        }
+    } else if (content.includes(redditLink)) {
+        let link = content.match(/(?<!\<)(?:https:\/\/www.reddit.com)[^(\s|?)]+/gi)
         for (let l in link) {
             let fxlink = []
-            fxlink[l] = link[l].replace('/shorts/', '/watch?v=')
+            fxlink[l] = link[l].replace('reddit', 'vxreddit')
             string += `${fxlink[l]} `
         }
-        if (string) message.reply(`${string}`);
-    } else if (content.includes(tiktokLink)) {
-        message.suppressEmbeds(true)
-        let link = content.match(/(?<!\<)(?:https:\/\/(?:www|vm).tiktok.com)[^\s]+/gi)
-        var string = ''
-        for (let l in link) {
-            let fxlink = []
-            fxlink[l] = link[l].replace('tiktok', 'vxtiktok')
-            string += `${fxlink[l]} `
-        }
-        if (string) message.reply(`${string}`);
     } if (content.includes(tumblrLink)) {
-        message.suppressEmbeds(true)
         let link = content.match(/(?<!\<)(?:https:\/\/www.tumblr.com)[^(\s|?)]+/gi);
-        var string = ''
         for(let l in link) {
             let fxlink = []
             var name = link[l].split('/')[3];
@@ -73,9 +73,55 @@ client.on('messageCreate', message => {
             fxlink[l] = `https://${name}.tumblr.com/post/${id}`;
             string += `${fxlink[l]} `
         }
-        if (string) message.reply(`${string}`);
     } else if (content.startsWith("t!invite")) {
         message.reply(`invite this bot with https://discord.com/api/oauth2/authorize?client_id=${CONFIG.app_id}&permissions=414464625664&scope=bot%20applications.commands or clone the repo and host it yourself https://github.com/LuckyLapras/fixbot`)
+    }
+
+    if (string) {
+        if (content.startsWith('||')) {
+            string = `||${string}||`;
+        }
+        const reply = await message.reply(`${string}`);
+        await message.suppressEmbeds(true);
+    }
+});
+
+client.commands = new Collection();
+
+const foldersPath = path.join(__dirname, 'commands');
+const commandFolders = fs.readdirSync(foldersPath);
+
+for (const folder of commandFolders) {
+    const commandsPath = path.join(foldersPath, folder);
+    const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+    for (const file of commandFiles) {
+        const filePath = path.join(commandsPath, file);
+        const command = require(filePath);
+        // Set a new item in the Collection with the key as the command name and the value as the exported module
+        if ('data' in command && 'execute' in command) {
+            client.commands.set(command.data.name, command);
+            } else {
+                console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+            }
+        }
+    }
+
+client.on(Events.InteractionCreate, async interaction => {
+    if (!interaction.isChatInputCommand()) return;
+    const command = interaction.client.commands.get(interaction.commandName);
+    if (!command) {
+        console.error(`No command matching ${interaction.commandName} was found.`);
+        return;
+    }
+    try {
+        await command.execute(interaction);
+    } catch (error) {
+        console.error(error);
+        if (interaction.replied || interaction.deferred) {
+            await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
+        } else {
+            await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+        }
     }
 });
 
