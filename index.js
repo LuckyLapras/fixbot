@@ -32,16 +32,13 @@ client.on('messageCreate', async message => {
             string += `${fxlink[l]} `
         }
     } else if (content.includes(xLink)) {
-        message.react('🇧🇷')
         let link = content.match(/(?<!\<)(?:https:\/\/x.com)[^(\s|?)]+/gi)
-        //var string = ''
         for (let l in link) {
             let fxlink = []
             fxlink[l] = link[l].replace('//x', '//fxtwitter')
             string += `${fxlink[l]} `
         }
     } else if (content.includes(ytLink)) {
-        var string = ''
         if (content.includes('/shorts/')) {
             let link = content.match(/(?<!\<)(?:https:\/\/(?:www.)?youtube.com\/shorts)[^\s]+/gi)
             for (let l in link) {
@@ -74,15 +71,19 @@ client.on('messageCreate', async message => {
             string += `${fxlink[l]} `
         }
     } else if (content.startsWith("t!invite")) {
-        message.reply(`invite this bot with https://discord.com/api/oauth2/authorize?client_id=${CONFIG.app_id}&permissions=414464625664&scope=bot%20applications.commands or clone the repo and host it yourself https://github.com/LuckyLapras/fixbot`)
+        message.reply(`invite this bot with https://discord.com/api/oauth2/authorize?client_id=${CONFIG.app_id}&permissions=412317182976&scope=bot%20applications.commands or clone the repo and host it yourself https://github.com/LuckyLapras/fixbot`)
     }
 
     if (string) {
         if (content.startsWith('||')) {
             string = `||${string}||`;
         }
-        const reply = await message.reply(`${string}`);
-        await message.suppressEmbeds(true);
+        try {
+            const reply = await message.reply(`${string}`);
+            await message.suppressEmbeds(true);
+        } catch (error) {
+            console.log(error);
+        }
     }
 });
 
