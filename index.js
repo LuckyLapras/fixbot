@@ -25,14 +25,14 @@ client.on('messageCreate', async message => {
     var content = message.content
     var string = ''
     if (content.includes(twitLink)) {
-        let link = content.match(/(?<!\<)(?:https:\/\/twitter.com)[^(\s|?)]+/gi)
+        let link = content.match(/(?<!\<)(?:https:\/\/twitter.com\/.{1,20}\/status\/)[^(\s|?)]+/gi)
         for (let l in link) {
             let fxlink = []
             fxlink[l] = link[l].replace('//twit', '//fxtwit')
             string += `${fxlink[l]} `
         }
     } else if (content.includes(xLink)) {
-        let link = content.match(/(?<!\<)(?:https:\/\/x.com)[^(\s|?)]+/gi)
+        let link = content.match(/(?<!\<)(?:https:\/\/x.com\/.{1,20}\/status\/)[^(\s|?)]+/gi)
         for (let l in link) {
             let fxlink = []
             fxlink[l] = link[l].replace('//x', '//fxtwitter')
