@@ -19,9 +19,10 @@ client.once(Events.ClientReady, c => {
 client.on('messageCreate', async message => {
     const twitLink = 'https://twitter.com/'
     const xLink = 'https://x.com/'
-    const ytLink = '.youtube.com/'
+    const ytLink = 'youtube.com/'
     const redditLink = 'https://www.reddit.com'
     const tumblrLink = 'https://www.tumblr.com'
+    const instaLink = 'https://www.instagram.com'
     var content = message.content
     var string = ''
     if (content.includes(twitLink)) {
@@ -40,14 +41,14 @@ client.on('messageCreate', async message => {
         }
     } else if (content.includes(ytLink)) {
         if (content.includes('/shorts/')) {
-            let link = content.match(/(?<!\<)(?:https:\/\/(?:www.)?youtube.com\/shorts)[^\s]+/gi)
+            let link = content.match(/(?<!\<)(?:https:\/\/(?:www\.)?youtube.com\/shorts)[^\s]+/gi)
             for (let l in link) {
                 let fxlink = []
                 fxlink[l] = link[l].replace('/shorts/', '/watch?v=')
                 string += `${fxlink[l]} `
             }
         } else {
-            let link = content.match(/(?<!\<)(?:https:\/\/(?:www.)?youtube.com\/)[^\s]+(?=&pp=)/gi)
+            let link = content.match(/(?<!\<)(?:https:\/\/(?:www\.)?youtube.com\/)[^\s]+(?=&pp=)/gi)
             for (let l in link) {
                 let fxlink = []
                 fxlink[l] = link[l]
@@ -61,13 +62,20 @@ client.on('messageCreate', async message => {
             fxlink[l] = link[l].replace('reddit', 'vxreddit')
             string += `${fxlink[l]} `
         }
-    } if (content.includes(tumblrLink)) {
+    } else if (content.includes(tumblrLink)) {
         let link = content.match(/(?<!\<)(?:https:\/\/www.tumblr.com)[^(\s|?)]+/gi);
         for(let l in link) {
             let fxlink = []
             var name = link[l].split('/')[3];
             var id = link[l].split('/')[4];
             fxlink[l] = `https://${name}.tumblr.com/post/${id}`;
+            string += `${fxlink[l]} `
+        }
+    } else if (content.includes(instaLink)) {
+        let link = content.match(/(?<!\<)(?:https:\/\/www.instagram.com)[^(\s|?)]+/gi);
+        for (let l in link) {
+            let fxlink = []
+            fxlink[l] = link[l].replace('instagram', 'ddinstagram')
             string += `${fxlink[l]} `
         }
     } else if (content.startsWith("t!invite")) {
