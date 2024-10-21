@@ -23,6 +23,8 @@ client.on('messageCreate', async message => {
     const redditLink = 'https://www.reddit.com'
     const tumblrLink = 'https://www.tumblr.com'
     const instaLink = 'https://www.instagram.com'
+    const tiktokLink = 'tiktok.com'
+    const bskyLink = 'bsky.app'
     var content = message.content
     var string = ''
     if (content.includes(twitLink)) {
@@ -48,7 +50,7 @@ client.on('messageCreate', async message => {
                 string += `${fxlink[l]} `
             }
         } else {
-            let link = content.match(/(?<!\<)(?:https:\/\/(?:www\.)?youtube.com\/)[^\s]+(?=&pp=)/gi)
+            let link = content.match(/(?<!\<)(?:https:\/\/(?:www\.)?youtube.com\/)[^\s]+(?=(&pp=|&ab_channel=))/gi)
             for (let l in link) {
                 let fxlink = []
                 fxlink[l] = link[l]
@@ -72,11 +74,25 @@ client.on('messageCreate', async message => {
             string += `${fxlink[l]} `
         }
     } else if (content.includes(instaLink)) {
-        let link = content.match(/(?<!\<)(?:https:\/\/www.instagram.com)[^(\s|?)]+/gi);
+        let link = content.match(/(?<!\<)(?:https:\/\/www.instagram.com\/p\/)[^(\s|?)]+/gi);
         for (let l in link) {
             let fxlink = []
             fxlink[l] = link[l].replace('instagram', 'ddinstagram')
             string += `${fxlink[l]} `
+        }
+    } else if (content.includes(tiktokLink)) {
+        let link = content.match(/(?<!\<)(?:https:\/\/www.tiktok.com)[^(\s|?)]+/gi);
+        for (let l in link) {
+            let fxlink = []
+            fxlink[l] = link[l].replace('tiktok', 'vxtiktok')
+            string += `${fxlink[l]} `
+        }
+    } else if (content.includes(bskyLink)) {
+        let link = content.match(/(?<!\<)(?:https:\/\/bsky\.app\/profile\/.+\.bsky\.social\/post\/.+)/gi);
+        for (let l in link) {
+            let fxlink = []
+            fxlink[l] = link[l].replace('bsky', 'fxbsky')
+            string += `${fxlink[l]}`
         }
     } else if (content.startsWith("t!invite")) {
         message.reply(`invite this bot with https://discord.com/api/oauth2/authorize?client_id=${CONFIG.app_id}&permissions=412317182976&scope=bot%20applications.commands or clone the repo and host it yourself https://github.com/LuckyLapras/fixbot`)
