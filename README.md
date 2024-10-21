@@ -2,7 +2,6 @@
 
 discord bot to fix various links in discord messages. this bot specifically:
 - fixes twitter and x links using [FixTweet](https://github.com/FixTweet/FixTweet) (also removes tracking strings)
-- fixes tiktok links using [vxtiktok](https://github.com/dylanpdx/vxtiktok)
 - converts youtube shorts links to regular youtube video links
 - removes tracking strings (i think?) from youtube links
 - removes tracking strings from tumblr links and also rearranges them (i cba to explain this here)
