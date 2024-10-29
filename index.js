@@ -88,7 +88,7 @@ client.on('messageCreate', async message => {
             string += `${fxlink[l]} `
         }
     } else if (content.includes(bskyLink)) {
-        let link = content.match(/(?<!\<)(?:https:\/\/bsky\.app\/profile\/.+\.bsky\.social\/post\/.+)/gi);
+        let link = content.match(/(?<!\<)(?:https:\/\/bsky\.app\/profile\/.+\..+\..+\/post\/.+)/gi);
         for (let l in link) {
             let fxlink = []
             fxlink[l] = link[l].replace('bsky', 'fxbsky')
