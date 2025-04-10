@@ -28,29 +28,29 @@ client.on('messageCreate', async message => {
     var content = message.content
     var string = ''
     if (content.includes(twitLink)) {
-        let link = content.match(/(?<!\<)(?:https:\/\/twitter.com\/.{1,20}\/status\/)[^(\s|?)]+/gi)
+        let link = content.match(/(?<!\<)(?:https:\/\/twitter\.com\/.{1,20}\/status\/)[^(\s|?)]+/gi)
         for (let l in link) {
             let fxlink = []
-            fxlink[l] = link[l].replace('//twit', '//fxtwit')
+            fxlink[l] = link[l].replace('//twitter', '//m.fxtwitter')
             string += `${fxlink[l]} `
         }
     } else if (content.includes(xLink)) {
-        let link = content.match(/(?<!\<)(?:https:\/\/x.com\/.{1,20}\/status\/)[^(\s|?)]+/gi)
+        let link = content.match(/(?<!\<)(?:https:\/\/x\.com\/.{1,20}\/status\/)[^(\s|?)]+/gi)
         for (let l in link) {
             let fxlink = []
-            fxlink[l] = link[l].replace('//x', '//fxtwitter')
+            fxlink[l] = link[l].replace('//x', '//m.fxtwitter')
             string += `${fxlink[l]} `
         }
     } else if (content.includes(ytLink)) {
         if (content.includes('/shorts/')) {
-            let link = content.match(/(?<!\<)(?:https:\/\/(?:www\.)?youtube.com\/shorts)[^\s]+/gi)
+            let link = content.match(/(?<!\<)(?:https:\/\/(?:www\.)?youtube\.com\/shorts)[^\s]+/gi)
             for (let l in link) {
                 let fxlink = []
                 fxlink[l] = link[l].replace('/shorts/', '/watch?v=')
                 string += `${fxlink[l]} `
             }
         } else {
-            let link = content.match(/(?<!\<)(?:https:\/\/(?:www\.)?youtube.com\/)[^\s]+(?=(&pp=|&ab_channel=))/gi)
+            let link = content.match(/(?<!\<)(?:https:\/\/(?:www\.)?youtube\.com\/)[^\s]+(?=(&pp=|&ab_channel=i|\?si=))/gi)
             for (let l in link) {
                 let fxlink = []
                 fxlink[l] = link[l]
@@ -58,14 +58,14 @@ client.on('messageCreate', async message => {
             }
         }
     } else if (content.includes(redditLink)) {
-        let link = content.match(/(?<!\<)(?:https:\/\/www.reddit.com)[^(\s|?)]+/gi)
+        let link = content.match(/(?<!\<)(?:https:\/\/(?:(www\.|old\.|new\.|dd\.))reddit\.com)[^(\s|?)]+/gi)
         for (let l in link) {
             let fxlink = []
-            fxlink[l] = link[l].replace('reddit', 'vxreddit')
+            fxlink[l] = link[l].replace('reddit', 'rxddit')
             string += `${fxlink[l]} `
         }
     } else if (content.includes(tumblrLink)) {
-        let link = content.match(/(?<!\<)(?:https:\/\/www.tumblr.com)[^(\s|?)]+/gi);
+        let link = content.match(/(?<!\<)(?:https:\/\/www\.tumblr\.com)[^(\s|?)]+/gi);
         for(let l in link) {
             let fxlink = []
             var name = link[l].split('/')[3];
@@ -74,21 +74,21 @@ client.on('messageCreate', async message => {
             string += `${fxlink[l]} `
         }
     } else if (content.includes(instaLink)) {
-        let link = content.match(/(?<!\<)(?:https:\/\/www.instagram.com\/p\/)[^(\s|?)]+/gi);
+        let link = content.match(/(?<!\<)(?:https:\/\/www\.instagram\.com\/)[^(\s|?)]+/gi);
         for (let l in link) {
             let fxlink = []
             fxlink[l] = link[l].replace('instagram', 'ddinstagram')
             string += `${fxlink[l]} `
         }
     } else if (content.includes(tiktokLink)) {
-        let link = content.match(/(?<!\<)(?:https:\/\/www.tiktok.com)[^(\s|?)]+/gi);
+        let link = content.match(/(?<!\<)(?:https:\/\/www\.tiktok\.com)[^(\s|?)]+/gi);
         for (let l in link) {
             let fxlink = []
             fxlink[l] = link[l].replace('tiktok', 'vxtiktok')
             string += `${fxlink[l]} `
         }
     } else if (content.includes(bskyLink)) {
-        let link = content.match(/(?<!\<)(?:https:\/\/bsky\.app\/profile\/.+\..+\..+\/post\/.+)/gi);
+        let link = content.match(/(?<!\<)(?:https:\/\/bsky\.app\/profile\/.+\/post\/.+)/gi);
         for (let l in link) {
             let fxlink = []
             fxlink[l] = link[l].replace('bsky', 'fxbsky')
@@ -99,7 +99,7 @@ client.on('messageCreate', async message => {
     }
 
     if (string) {
-        if (content.startsWith('||')) {
+        if (content.includes('||')) {
             string = `||${string}||`;
         }
         try {
