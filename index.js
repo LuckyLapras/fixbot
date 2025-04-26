@@ -103,8 +103,11 @@ client.on('messageCreate', async message => {
             string = `||${string}||`;
         }
         try {
-            const reply = await message.reply(`${string}`);
-            await message.suppressEmbeds(true);
+            const replyAndRemoveEmbed = async () => {
+                const reply = await message.reply(`${string}`);
+                message.suppressEmbeds(true);
+            }
+            replyAndRemoveEmbed();
         } catch (error) {
             console.log(error);
         }
