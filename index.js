@@ -72,7 +72,12 @@ client.on('messageCreate', async message => {
             let fxlink = []
             var name = link[l].split('/')[3];
             var id = link[l].split('/')[4];
-            fxlink[l] = `https://${name}.tumblr.com/post/${id}`;
+            if (id == 'tagged') {
+                var tag = link[l].split('/')[5];
+                fxlink[l] = `https://${name}.tumblr.com/${id}/${tag}`;
+            } else {
+                fxlink[l] = `https://${name}.tumblr.com/post/${id}`;
+            }
             string += `${fxlink[l]} `
         }
     } else if (content.includes(instaLink)) {
@@ -104,6 +109,9 @@ client.on('messageCreate', async message => {
         if (content.includes('||')) {
             string = `||${string}||`;
         }
+        if (content.includes('/grok/')) {
+            string = 'fucking kill yourself'
+        }
         try {
             const replyAndRemoveEmbed = async () => {
                 const reply = await message.reply(`${string}`);
@@ -118,7 +126,7 @@ client.on('messageCreate', async message => {
 
 client.commands = new Collection();
 
-const foldersPath = path.join(__dirname, 'commands');
+const foldersPath = path.join(__dirname, 'commands/global');
 const commandFolders = fs.readdirSync(foldersPath);
 
 for (const folder of commandFolders) {
