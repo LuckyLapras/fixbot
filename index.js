@@ -21,12 +21,13 @@ client.once(Events.ClientReady, c => {
 client.on('messageCreate', async message => {
     const twitLink = 'https://twitter.com/'
     const xLink = 'https://x.com/'
-    const ytLink = 'youtube.com/'
-    const redditLink = 'https://www.reddit.com'
-    const tumblrLink = 'https://www.tumblr.com'
-    const instaLink = 'https://www.instagram.com'
-    const tiktokLink = 'tiktok.com'
-    const bskyLink = 'bsky.app'
+    const ytLink = 'https://youtube.com/'
+    const ytLink2 = 'https://youtu.be/'
+    const redditLink = 'https://www.reddit.com/'
+    const tumblrLink = 'https://www.tumblr.com/'
+    const instaLink = 'https://www.instagram.com/'
+    const tiktokLink = 'https://tiktok.com/'
+    const bskyLink = 'https://bsky.app'
     var content = message.content
     var string = ''
     if (content.includes(twitLink)) {
@@ -43,7 +44,7 @@ client.on('messageCreate', async message => {
             fxlink[l] = link[l].replace('//x', '//m.fxtwitter')
             string += `${fxlink[l]} `
         }
-    } else if (content.includes(ytLink)) {
+    } else if (content.includes(ytLink) || content.includes(ytLink2)) {
         if (content.includes('/shorts/')) {
             let link = content.match(/(?<!\<)(?:https:\/\/(?:www\.)?youtube\.com\/shorts)[^\s]+/gi)
             for (let l in link) {
@@ -52,7 +53,7 @@ client.on('messageCreate', async message => {
                 string += `${fxlink[l]} `
             }
         } else {
-            let link = content.match(/(?<!\<)(?:https:\/\/(?:www\.)?youtube\.com\/)[^\s]+(?=(&pp=|&ab_channel=i|\?si=))/gi)
+            let link = content.match(/(?<!\<)(?:https:\/\/(?=((?:www\.)?youtube\.com\/|youtu\.be)))[^\s]+(?=(&pp=|&ab_channel=i|\?si=))/gi)
             for (let l in link) {
                 let fxlink = []
                 fxlink[l] = link[l]
