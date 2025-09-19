@@ -30,93 +30,80 @@ client.on('messageCreate', async message => {
     const bskyLink = 'https://bsky.app'
     var content = message.content
     var string = ''
-    if (content.includes(twitLink)) {
-        let link = content.match(/(?<!\<)(?:https:\/\/twitter\.com\/.{1,20}\/status\/)[^(\s|?)]+/gi)
-        for (let l in link) {
-            let fxlink = []
-            fxlink[l] = link[l].replace('//twitter', '//m.fxtwitter')
-            string += `${fxlink[l]} `
-        }
-    } else if (content.includes(xLink)) {
-        let link = content.match(/(?<!\<)(?:https:\/\/x\.com\/.{1,20}\/status\/)[^(\s|?)]+/gi)
-        for (let l in link) {
-            let fxlink = []
-            fxlink[l] = link[l].replace('//x', '//m.fxtwitter')
-            string += `${fxlink[l]} `
-        }
-    } else if (content.includes(ytLink) || content.includes(ytLink2)) {
-        if (content.includes('/shorts/')) {
-            let link = content.match(/(?<!\<)(?:https:\/\/(?:www\.)?youtube\.com\/shorts)[^\s]+/gi)
-            for (let l in link) {
-                let fxlink = []
-                fxlink[l] = link[l].replace('/shorts/', '/watch?v=')
-                string += `${fxlink[l]} `
-            }
-        } else {
-            let link = content.match(/(?<!\<)(?:https:\/\/(?=((?:www\.)?youtube\.com\/|youtu\.be)))[^\s]+(?=(&pp=|&ab_channel=i|\?si=))/gi)
-            for (let l in link) {
-                let fxlink = []
-                fxlink[l] = link[l]
-                string += `${fxlink[l]} `
-            }
-        }
-    } else if (content.includes(redditLink)) {
-        let link = content.match(/(?<!\<)(?:https:\/\/(?:(www\.|old\.|new\.|dd\.))reddit\.com)[^(\s|?)]+/gi)
-        for (let l in link) {
-            let fxlink = []
-            fxlink[l] = link[l].replace('reddit', 'rxddit')
-            string += `${fxlink[l]} `
-        }
-    } else if (content.includes(tumblrLink)) {
-        let link = content.match(/(?<!\<)(?:https:\/\/www\.tumblr\.com)[^(\s|?)]+/gi);
-        for(let l in link) {
-            let fxlink = []
-            var name = link[l].split('/')[3];
-            var id = link[l].split('/')[4];
-            if (id == 'tagged') {
-                var tag = link[l].split('/')[5];
-                fxlink[l] = `https://${name}.tumblr.com/${id}/${tag}`;
-            } else {
-                fxlink[l] = `https://${name}.tumblr.com/post/${id}`;
-            }
-            string += `${fxlink[l]} `
-        }
-    } else if (content.includes(instaLink)) {
-        let link = content.match(/(?<!\<)(?:https:\/\/www\.instagram\.com\/)[^(\s|?)]+/gi);
-        for (let l in link) {
-            let fxlink = []
-            fxlink[l] = link[l].replace('instagram', 'ddinstagram')
-            string += `${fxlink[l]} `
-        }
-    } else if (content.includes(tiktokLink)) {
-        let link = content.match(/(?<!\<)(?:https:\/\/www\.tiktok\.com)[^(\s|?)]+/gi);
-        for (let l in link) {
-            let fxlink = []
-            fxlink[l] = link[l].replace('tiktok', 'vxtiktok')
-            string += `${fxlink[l]} `
-        }
-    } else if (content.includes(bskyLink)) {
-        let link = content.match(/(?<!\<)(?:https:\/\/bsky\.app\/profile\/.+\/post\/.+)/gi);
-        for (let l in link) {
-            let fxlink = []
-            fxlink[l] = link[l].replace('bsky', 'fxbsky')
-            string += `${fxlink[l]}`
-        }
-    } else if (content.startsWith("t!invite")) {
-        message.reply(`invite this bot with https://discord.com/api/oauth2/authorize?client_id=${CONFIG.app_id}&permissions=412317182976&scope=bot%20applications.commands or clone the repo and host it yourself https://github.com/LuckyLapras/fixbot`)
+    var links = []
+    if (message.author.bot) {
+        return
     }
+    links = content.match(/(?<!\<)(?:\|\|)?(?:https:\/\/)[^\s]+/g)
+    for (let l in links) {
+        console.log(`link found: ${links[l]}`)
+        if (links[l].includes(twitLink)) {
+            var link = links[l].match(/(?<!\<)(?:https:\/\/twitter\.com\/.{1,20}\/status\/)[^(\s|?)]+/gi)
+            var fxlink = ''
+            fxlink = link[0].replace('//twitter', '//m.fxtwitter')
+        } else if (links[l].includes(xLink)) {
+            var link = links[l].match(/(?<!\<)(?:https:\/\/x\.com\/.{1,20}\/status\/)[^(\s|?)]+/gi)
+            var fxlink = ''
+            fxlink = link[0].replace('//x', '//m.fxtwitter')
+        } else if (links[l].includes(ytLink) || links[l].includes(ytLink2)) {
+            if (links[l].includes('/shorts/')) {
+                var link = links[l].match(/(?<!\<)(?:https:\/\/(?:www\.)?youtube\.com\/shorts)[^\s]+/gi)
+                var fxlink = ''
+                fxlink = link[0].replace('/shorts/', '/watch?v=')
+            } else {
+                var link = links[l].match(/(?<!\<)(?:https:\/\/(?=((?:www\.)?youtube\.com\/|youtu\.be)))[^\s]+(?=(&pp=|&ab_channel=i|\?si=))/gi)
+                var fxlink = ''
+                fxlink = link[0]
+            }
+        } else if (links[l].includes(redditLink)) {
+            var link = links[l].match(/(?<!\<)(?:https:\/\/(?:(www\.|old\.|new\.|dd\.))reddit\.com)[^(\s|?)]+/gi)
+            var fxlink = ''
+            fxlink = link[0].replace('reddit', 'rxddit')
+        } else if (links[l].includes(tumblrLink)) {
+            var link = links[l].match(/(?<!\<)(?:https:\/\/www\.tumblr\.com)[^(\s|?)]+/gi);
+            var fxlink = ''
+            var name = link[0].split('/')[3];
+            var id = link[0].split('/')[4];
+            if (id == 'tagged') {
+                var tag = link[0].split('/')[5];
+                fxlink = `https://${name}.tumblr.com/${id}/${tag}`;
+            } else {
+                fxlink = `https://${name}.tumblr.com/post/${id}`;
+            }
+        } else if (links[l].includes(instaLink)) {
+            var link = links[l].match(/(?<!\<)(?:https:\/\/www\.instagram\.com\/)[^(\s|?)]+/gi);
+            var fxlink = ''
+            fxlink = link[0].replace('instagram', 'ddinstagram')
+        } else if (links[l].includes(tiktokLink)) {
+            var link = links[l].match(/(?<!\<)(?:https:\/\/www\.tiktok\.com)[^(\s|?)]+/gi);
+            var fxlink = ''
+            fxlink = link[0].replace('tiktok', 'vxtiktok')
+        } else if (links[l].includes(bskyLink)) {
+            var link = links[l].match(/(?<!\<)(?:https:\/\/bsky\.app\/profile\/.+?\/post\/)[^\s]+/gi);
+            var fxlink = ''
+            fxlink = link[0].replace('bsky', 'fxbsky')
+        } else if (content.startsWith("t!invite")) {
+            message.reply(`invite this bot with https://discord.com/api/oauth2/authorize?client_id=${CONFIG.app_id}&permissions=412317182976&scope=bot%20applications.commands or clone the repo and host it yourself https://github.com/LuckyLapras/fixbot`)
+        }
 
+        if (fxlink) {
+            if (link[0].includes('||')) {
+                fxlink = `||${fxlink}||`;
+            }
+            if (link[0].includes('/grok/')) {
+                fxling = 'fucking kill yourself'
+            }
+            console.log(`link fixed: ${fxlink}`)
+            string += `${fxlink} `
+        }
+    }
     if (string) {
-        if (content.includes('||')) {
-            string = `||${string}||`;
-        }
-        if (content.includes('/grok/')) {
-            string = 'fucking kill yourself'
-        }
+        console.log(`string created: ${string}`)
         try {
             const replyAndRemoveEmbed = async () => {
                 const reply = await message.reply(`${string}`);
                 message.suppressEmbeds(true);
+                console.log('reply sent')
             }
             replyAndRemoveEmbed();
         } catch (error) {
