@@ -38,29 +38,34 @@ client.on('messageCreate', async message => {
     for (let l in links) {
         console.log(`link found: ${links[l]}`)
         if (links[l].includes(twitLink)) {
-            var link = links[l].match(/(?<!\<)(?:https:\/\/twitter\.com\/.{1,20}\/status\/)[^(\s|?)]+/gi)
+            var link = links[l].match(/(?:https:\/\/twitter\.com\/.{1,20}\/status\/)[^(\s|?)]+/gi)
             var fxlink = ''
-            fxlink = link[0].replace('//twitter', '//m.fxtwitter')
+            fxlink = link[0].replace('//twitter', '//fxtwitter')
         } else if (links[l].includes(xLink)) {
-            var link = links[l].match(/(?<!\<)(?:https:\/\/x\.com\/.{1,20}\/status\/)[^(\s|?)]+/gi)
+            var link = links[l].match(/(?:https:\/\/x\.com\/.{1,20}\/status\/)[^(\s|?)]+/gi)
             var fxlink = ''
-            fxlink = link[0].replace('//x', '//m.fxtwitter')
+            fxlink = link[0].replace('//x', '//fxtwitter')
         } else if (links[l].includes(ytLink) || links[l].includes(ytLink2)) {
             if (links[l].includes('/shorts/')) {
-                var link = links[l].match(/(?<!\<)(?:https:\/\/(?:www\.)?youtube\.com\/shorts)[^\s]+/gi)
+                var link = links[l].match(/(?:https:\/\/(?:www\.)?youtube\.com\/shorts)[^\s]+/gi)
                 var fxlink = ''
                 fxlink = link[0].replace('/shorts/', '/watch?v=')
             } else {
-                var link = links[l].match(/(?<!\<)(?:https:\/\/(?=((?:www\.)?youtube\.com\/|youtu\.be)))[^\s]+(?=(&pp=|&ab_channel=i|\?si=))/gi)
+                var timestamp = links[l].match(/(?<=t=)\d+/)
+                var link = links[l].match(/(?:https:\/\/(?=((?:www\.)?youtube\.com\/|youtu\.be)))[^\s]+(?=(&pp=|&ab_channel=i|\?si=))/gi)
                 var fxlink = ''
-                fxlink = link[0]
+                if (timestamp) {
+                    fxlink = `${link[0]}&t=${timestamp}`
+                } else {
+                    fxlink = link[0]
+                }
             }
         } else if (links[l].includes(redditLink)) {
-            var link = links[l].match(/(?<!\<)(?:https:\/\/(?:(www\.|old\.|new\.|dd\.))reddit\.com)[^(\s|?)]+/gi)
+            var link = links[l].match(/(?:https:\/\/(?:(www\.|old\.|new\.|dd\.))reddit\.com)[^(\s|?)]+/gi)
             var fxlink = ''
             fxlink = link[0].replace('reddit', 'rxddit')
         } else if (links[l].includes(tumblrLink)) {
-            var link = links[l].match(/(?<!\<)(?:https:\/\/www\.tumblr\.com)[^(\s|?)]+/gi);
+            var link = links[l].match(/(?:https:\/\/www\.tumblr\.com)[^(\s|?)]+/gi);
             var fxlink = ''
             var name = link[0].split('/')[3];
             var id = link[0].split('/')[4];
@@ -71,15 +76,15 @@ client.on('messageCreate', async message => {
                 fxlink = `https://${name}.tumblr.com/post/${id}`;
             }
         } else if (links[l].includes(instaLink)) {
-            var link = links[l].match(/(?<!\<)(?:https:\/\/www\.instagram\.com\/)[^(\s|?)]+/gi);
+            var link = links[l].match(/(?:https:\/\/www\.instagram\.com\/)[^(\s|?)]+/gi);
             var fxlink = ''
             fxlink = link[0].replace('instagram', 'ddinstagram')
         } else if (links[l].includes(tiktokLink)) {
-            var link = links[l].match(/(?<!\<)(?:https:\/\/www\.tiktok\.com)[^(\s|?)]+/gi);
+            var link = links[l].match(/(?:https:\/\/www\.tiktok\.com)[^(\s|?)]+/gi);
             var fxlink = ''
             fxlink = link[0].replace('tiktok', 'vxtiktok')
         } else if (links[l].includes(bskyLink)) {
-            var link = links[l].match(/(?<!\<)(?:https:\/\/bsky\.app\/profile\/.+?\/post\/)[^\s]+/gi);
+            var link = links[l].match(/(?:https:\/\/bsky\.app\/profile\/.+?\/post\/)[^\s]+/gi);
             var fxlink = ''
             fxlink = link[0].replace('bsky', 'fxbsky')
         } else if (content.startsWith("t!invite")) {
@@ -91,7 +96,7 @@ client.on('messageCreate', async message => {
                 fxlink = `||${fxlink}||`;
             }
             if (link[0].includes('/grok/')) {
-                fxling = 'fucking kill yourself'
+                fxlink = 'fucking kill yourself'
             }
             console.log(`link fixed: ${fxlink}`)
             string += `${fxlink} `
