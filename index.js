@@ -93,7 +93,7 @@ client.on('messageCreate', async message => {
 
         if (fxlink) {
             if (link[0].includes('||')) {
-                fxlink = `||${fxlink}||`;
+                fxlink = `||${fxlink}`;
             }
             if (link[0].includes('/grok/')) {
                 fxlink = 'fucking kill yourself'
