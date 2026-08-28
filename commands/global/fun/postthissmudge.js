@@ -5,7 +5,7 @@ module.exports = {
         .setName('postthissmudge')
         .setDescription('posts this smudge'),
     async execute(interaction) {
-        await interaction.reply('https://files.catbox.moe/7fuu19.jpg');
+        await interaction.reply('https://files.catbox.moe/5e7nf3.jpg');
     },
 };
 

@@ -5,7 +5,7 @@ const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 const CONFIG = require('./config.json');
 
-const client = new Client({ 
+const client = new Client({
     intents: [
         GatewayIntentBits.Guilds, 
         GatewayIntentBits.GuildMessages,
@@ -23,7 +23,7 @@ client.on('messageCreate', async message => {
     const xLink = 'https://x.com/'
     const ytLink = 'https://youtube.com/'
     const ytLink2 = 'https://youtu.be/'
-    const redditLink = 'https://www.reddit.com/'
+    const redditLink = 'reddit.com/'
     const tumblrLink = 'https://www.tumblr.com/'
     const instaLink = 'https://www.instagram.com/'
     const tiktokLink = 'https://tiktok.com/'
@@ -34,17 +34,16 @@ client.on('messageCreate', async message => {
     if (message.author.bot) {
         return
     }
-    links = content.match(/(?<!\<)(?:\|\|)?(?:https:\/\/)[^\s]+/g)
+    //links = content.match(/(?<!\<)(?:\|\|)?(?:https:\/\/)[^\s]+/g)
+    links = content.match(/(?<!\<)(?:https:\/\/)[^\s]+/g)
     for (let l in links) {
-        console.log(`link found: ${links[l]}`)
-        if (links[l].includes(twitLink)) {
-            var link = links[l].match(/(?:https:\/\/twitter\.com\/.{1,20}\/status\/)[^(\s|?)]+/gi)
-            var fxlink = ''
-            fxlink = link[0].replace('//twitter', '//fxtwitter')
-        } else if (links[l].includes(xLink)) {
-            var link = links[l].match(/(?:https:\/\/x\.com\/.{1,20}\/status\/)[^(\s|?)]+/gi)
-            var fxlink = ''
-            fxlink = link[0].replace('//x', '//fxtwitter')
+        if (links[l].includes(twitLink) || links[l].includes(xLink)) {
+            var fxlink = 'https://fxtwitter.com'
+	    //var plink = 'https://nitter.net'
+            var link = links[l].match(/(?<=(?:\.com))\/.{1,20}\/status\/[^(\s|?)]+/gi)
+            fxlink += `${link}`
+	    //plink += `${link}`
+	    //plink = `[nitter](<${plink}>)`
         } else if (links[l].includes(ytLink) || links[l].includes(ytLink2)) {
             if (links[l].includes('/shorts/')) {
                 var link = links[l].match(/(?:https:\/\/(?:www\.)?youtube\.com\/shorts)[^\s]+/gi)
@@ -52,10 +51,10 @@ client.on('messageCreate', async message => {
                 fxlink = link[0].replace('/shorts/', '/watch?v=')
             } else {
                 var timestamp = links[l].match(/(?<=t=)\d+/)
-                var link = links[l].match(/(?:https:\/\/(?=((?:www\.)?youtube\.com\/|youtu\.be)))[^\s]+(?=(&pp=|&ab_channel=i|\?si=))/gi)
+                var link = links[l].match(/(?:https:\/\/(?=((?:www\.)?youtube\.com\/|youtu\.be)))[^\s]+(?=(&pp=|&ab_channel=|\?si=|\?is=))/gi)
                 var fxlink = ''
                 if (timestamp) {
-                    fxlink = `${link[0]}&t=${timestamp}`
+                    fxlink = `${link[0]}?t=${timestamp}`
                 } else {
                     fxlink = link[0]
                 }
@@ -63,22 +62,31 @@ client.on('messageCreate', async message => {
         } else if (links[l].includes(redditLink)) {
             var link = links[l].match(/(?:https:\/\/(?:(www\.|old\.|new\.|dd\.))reddit\.com)[^(\s|?)]+/gi)
             var fxlink = ''
-            fxlink = link[0].replace('reddit', 'rxddit')
+            fxlink = link[0].replace('reddit', 'vxreddit')
+            fxlink = fxlink.replace(/(?<=\/\/)(old|new|dd)/, 'www')
         } else if (links[l].includes(tumblrLink)) {
             var link = links[l].match(/(?:https:\/\/www\.tumblr\.com)[^(\s|?)]+/gi);
             var fxlink = ''
             var name = link[0].split('/')[3];
             var id = link[0].split('/')[4];
-            if (id == 'tagged') {
-                var tag = link[0].split('/')[5];
-                fxlink = `https://${name}.tumblr.com/${id}/${tag}`;
+            if (id) {
+                if (id == 'tagged') {
+                    var tag = link[0].split('/')[5];
+                    fxlink = `https://${name}.tumblr.com/${id}/${tag}`;
+                } else {
+                    fxlink = `https://${name}.tumblr.com/post/${id}`;
+                }
             } else {
-                fxlink = `https://${name}.tumblr.com/post/${id}`;
+                fxlink = `https://${name}.tumblr.com`
             }
         } else if (links[l].includes(instaLink)) {
-            var link = links[l].match(/(?:https:\/\/www\.instagram\.com\/)[^(\s|?)]+/gi);
+            //var link = links[l].match(/https:\/\/www\.instagram\.com\/(.*\/)?p\/[^(\s|?)]+/gi);
+            var link = links[l].match(/https:\/\/www\.instagram\.com\/[^(\s|?)]+/gi);
             var fxlink = ''
-            fxlink = link[0].replace('instagram', 'ddinstagram')
+	    var plink = ''
+            fxlink = link[0].replace('instagram', 'oginstagram')
+	    plink = link[0].replace('instagram', 'imginn')
+	    plink = `[imginn](<${plink}>)`
         } else if (links[l].includes(tiktokLink)) {
             var link = links[l].match(/(?:https:\/\/www\.tiktok\.com)[^(\s|?)]+/gi);
             var fxlink = ''
@@ -91,26 +99,33 @@ client.on('messageCreate', async message => {
             message.reply(`invite this bot with https://discord.com/api/oauth2/authorize?client_id=${CONFIG.app_id}&permissions=412317182976&scope=bot%20applications.commands or clone the repo and host it yourself https://github.com/LuckyLapras/fixbot`)
         }
 
+	if (plink) {
+	    string += `${plink} | `
+	}
+
         if (fxlink) {
-            if (link[0].includes('||')) {
-                fxlink = `||${fxlink}`;
+            //if (links[l].includes('||')) {
+            if (content.match(/\|\|.+\|\|/)) {
+                fxlink = `||${fxlink}||`;
             }
             if (link[0].includes('/grok/')) {
                 fxlink = 'fucking kill yourself'
             }
             console.log(`link fixed: ${fxlink}`)
-            string += `${fxlink} `
+            string += `${fxlink} \n`
         }
     }
     if (string) {
+        string = string.trim()
         console.log(`string created: ${string}`)
         try {
-            const replyAndRemoveEmbed = async () => {
-                const reply = await message.reply(`${string}`);
-                message.suppressEmbeds(true);
-                console.log('reply sent')
+            message.suppressEmbeds(true);
+            message.reply(`${string}`);
+            console.log('reply sent')
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            if (message.embeds) {
+                message.suppressEmbeds(true)
             }
-            replyAndRemoveEmbed();
         } catch (error) {
             console.log(error);
         }
